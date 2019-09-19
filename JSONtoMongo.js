@@ -3,11 +3,10 @@
   Import modules/files you may need to correctly run the script. 
   Make sure to save your DB's uri in the config file, then import it with a require statement!
  */
-var fs = require('fs'),
-    mongoose = require('mongoose'), 
-    Schema = mongoose.Schema, 
-    Listing = require('./ListingSchema.js'), 
-    config = require('./config');
+var fs = require('fs')
+var mongoose = require('mongoose')
+var Listing = require('./ListingSchema.js') 
+var config = require('./config')
 
 /* Connect to your database using mongoose - remember to keep your key secret*/
 //see https://mongoosejs.com/docs/connections.html
@@ -21,8 +20,24 @@ var fs = require('fs'),
   Remember that we needed to read in a file like we did in Bootcamp Assignment #1.
  */
 
+var dbname = `${config.db.uri}/${config.db.db_name}`;
 
-/*  
-  Check to see if it works: Once you've written + run the script, check out your MongoLab database to ensure that 
-  it saved everything correctly. 
- */
+mongoose.connect(dbname).then(() => { 
+
+    fs.readFile('listings.json', 'utf-8', function(err, data) { 
+      
+        var json = JSON.parse(data);
+        json.entries.forEach(function(entry) { 
+
+             var listing = new Listing({code: entry.code, 
+				       name: entry.name,
+                                       coordinates: entry.coordinates, 
+				       address: entry.address});
+             listing.save().then(doc => {console.log(doc);}).catch(err => {throw err;});
+        });
+     
+    });
+
+})
+.catch(err => { throw err; });
+

@@ -4,6 +4,8 @@
 
 module.exports = {
   db: {
-    uri: '', //place the URI of your mongo database here.
+    uri: 'localhost:27017', //place the URI of your mongo database here.
+    db_name: 'listings'
   }
 };
+
